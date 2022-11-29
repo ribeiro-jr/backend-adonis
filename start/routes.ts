@@ -25,6 +25,11 @@ Route.group(() => {
   Route.get('/', async () => {
     return { message: 'welcome to api v1.0' }
   })
+
+  Route.group(() => {
+    Route.get('/', 'PostsController.index')
+    Route.post('/', 'PostsController.store')
+  }).prefix('/posts')
 })
   .prefix('/api')
   .middleware('auth')
