@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Post from 'App/Models/Post'
 import { cuid } from '@ioc:Adonis/Core/Helpers'
 import Application from '@ioc:Adonis/Core/Application'
+import { UploadService } from 'App/Services/UploadService'
 
 export default class PostsController {
   public async index({ response }: HttpContextContract) {
@@ -16,11 +17,14 @@ export default class PostsController {
     })
 
     if (coverImage) {
-      const coverImageName = `${cuid()}.${coverImage.extname}`
+      const coverImageName = UploadService.applicationStorage(coverImage, 'uploads/posts')
 
-      await coverImage.move(Application.tmpPath('uploads/posts'), {
-        name: coverImageName,
-      })
+      if (!coverImageName) {
+        return response.badRequest({
+          status: 204,
+          message: 'Não foi possivel fazer o upload do ficheiro',
+        })
+      }
 
       body.cover = coverImageName
     }
