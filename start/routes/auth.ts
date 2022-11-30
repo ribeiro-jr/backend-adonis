@@ -8,6 +8,7 @@ Route.group(() => {
     const password = request.input('password')
 
     const user = await User.query().where('email', email).firstOrFail()
+    console.log(await Hash.verify(user.password, password))
 
     if (!(await Hash.verify(user.password, password))) {
       return response.unauthorized('Invalid credentials')

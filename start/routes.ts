@@ -20,6 +20,7 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 import './routes/auth'
+import './routes/users'
 
 Route.group(() => {
   Route.get('/', async () => {

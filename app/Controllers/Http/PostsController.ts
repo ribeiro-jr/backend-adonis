@@ -1,8 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Post from 'App/Models/Post'
 import { cuid } from '@ioc:Adonis/Core/Helpers'
-import Application from '@ioc:Adonis/Core/Application'
 import { UploadService } from 'App/Services/UploadService'
+import Helper from 'App/Helpers/Helper'
 
 export default class PostsController {
   public async index({ response }: HttpContextContract) {
@@ -29,7 +29,7 @@ export default class PostsController {
       body.cover = coverImageName
     }
 
-    body.slug = this.slugify(body.title)
+    body.slug = Helper.slugify(body.title)
 
     const postsWithGivenSlug = await Post.findBy('slug', body.slug)
 
@@ -43,14 +43,5 @@ export default class PostsController {
       status: 200,
       data: post,
     })
-  }
-
-  public slugify(text: string): string {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '')
   }
 }
