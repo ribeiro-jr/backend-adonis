@@ -24,6 +24,8 @@ export default class Helper {
   }
 
   public static unlinkFile(filename, path) {
+    if (!filename) return
+
     if (typeof filename === 'object') {
       for (let fn of filename) {
         let filePath = Application.tmpPath(path) + fn

@@ -6,11 +6,27 @@ import { UploadService } from 'App/Services/UploadService'
 import Helper from 'App/Helpers/Helper'
 
 export default class PostsController {
-  public async index({ params, response }: HttpContextContract) {
-    const { page, perPage } = Helper.paginationParams(params)
+  public async index({ request, response }: HttpContextContract) {
+    const { page, perPage } = Helper.paginationParams(request.qs())
     return response.ok({
       status: 200,
       data: await Post.query().paginate(page, perPage),
+    })
+  }
+
+  public async show({ params, response }: HttpContextContract) {
+    const post = await Post.find(params.id)
+
+    if (!post?.toJSON()) {
+      return response.ok({
+        status: 204,
+        message: 'Post not founded',
+      })
+    }
+
+    return response.ok({
+      status: 200,
+      data: post,
     })
   }
 
