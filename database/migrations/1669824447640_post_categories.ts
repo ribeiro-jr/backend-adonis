@@ -1,17 +1,15 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'posts'
+  protected tableName = 'post_categories'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
-      table.string('slug').unique()
-      table.string('title')
-      table.integer('post_type_id').unsigned().references('post_types.id').onDelete('CASCADE') // delete profile when user is deleted
-      table.string('cover')
-      table.string('resume')
-      table.string('content')
+      table.increments('id').primary()
+
+      table.integer('post_id').unsigned().references('posts.id').onDelete('cascade')
+      table.integer('category_id').unsigned().references('categories.id').onDelete('cascade')
+      table.unique(['post_id', 'category_id'])
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

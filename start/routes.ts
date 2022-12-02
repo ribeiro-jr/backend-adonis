@@ -21,16 +21,12 @@
 import Route from '@ioc:Adonis/Core/Route'
 import './routes/auth'
 import './routes/users'
+import './routes/posts'
 
 Route.group(() => {
   Route.get('/', async () => {
     return { message: 'welcome to api v1.0' }
   })
-
-  Route.group(() => {
-    Route.get('/', 'PostsController.index')
-    Route.post('/', 'PostsController.store')
-  }).prefix('/posts')
 })
   .prefix('/api')
   .middleware('auth')

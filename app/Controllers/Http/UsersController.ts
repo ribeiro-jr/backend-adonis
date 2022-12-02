@@ -16,7 +16,7 @@ export default class UsersController {
 
     if (!user) {
       return response.badRequest({
-        status: 204,
+        status: 400,
         message: 'Error ao criar utilizador',
       })
     }
