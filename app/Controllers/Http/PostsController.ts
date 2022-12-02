@@ -24,16 +24,17 @@ export default class PostsController {
     })
 
     if (coverImage) {
-      const coverImageName = await UploadService.applicationStorage(coverImage, 'uploads/posts')
+      const coverImageUpload = await UploadService.applicationStorage(coverImage, 'uploads/posts')
 
-      if (!coverImageName) {
+      if (!coverImageUpload || coverImageUpload.error) {
         return response.badRequest({
           status: 400,
           message: 'Não foi possível fazer o upload do ficheiro',
+          error: coverImageUpload?.error,
         })
       }
 
-      body.cover = coverImage
+      body.cover = coverImageUpload.name
     }
 
     body.slug = Helper.slugify(body.title)
@@ -58,7 +59,7 @@ export default class PostsController {
     const { category_id } = request.only(['category_id'])
     const body = request.only(['post_type_id', 'title', 'resume', 'content', 'slug', 'cover'])
 
-    const post = await Post.findOrFail(params.id)
+    const post = await Post.find(params.id)
 
     if (!post?.toJSON()) {
       return response.ok({
@@ -73,16 +74,18 @@ export default class PostsController {
     })
 
     if (coverImage) {
-      const coverImageName = await UploadService.applicationStorage(coverImage, 'uploads/posts')
+      const coverImageUpload = await UploadService.applicationStorage(coverImage, 'uploads/posts')
 
-      if (!coverImageName) {
+      if (!coverImageUpload || coverImageUpload.error) {
         return response.badRequest({
-          status: 204,
-          message: 'Não foi possivel fazer o upload do ficheiro',
+          status: 400,
+          message: 'Não foi possível fazer o upload do ficheiro',
+          error: coverImageUpload?.error,
         })
       }
 
-      body.cover = coverImageName
+      Helper.unlinkFile(post.cover, 'uploads/posts/')
+      body.cover = coverImageUpload.name
     }
 
     body.slug = Helper.slugify(body.title)
@@ -119,6 +122,7 @@ export default class PostsController {
 
     await post.delete()
     await post.related('categories').detach()
+    Helper.unlinkFile(post.cover, 'uploads/posts/')
 
     return response.ok({
       status: 200,
