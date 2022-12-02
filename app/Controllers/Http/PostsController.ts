@@ -6,10 +6,11 @@ import { UploadService } from 'App/Services/UploadService'
 import Helper from 'App/Helpers/Helper'
 
 export default class PostsController {
-  public async index({ response }: HttpContextContract) {
+  public async index({ params, response }: HttpContextContract) {
+    const { page, perPage } = Helper.paginationParams(params)
     return response.ok({
       status: 200,
-      data: await Post.query().has('categories'),
+      data: await Post.query().paginate(page, perPage),
     })
   }
 

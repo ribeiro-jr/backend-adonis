@@ -7,4 +7,17 @@ export default class Helper {
       .replace(/[\s_-]+/g, '-')
       .replace(/^-+|-+$/g, '')
   }
+
+  public static paginationParams(params): { page: number; perPage: number } {
+    let { page, perPage } = params
+
+    if (!page) page = 1
+
+    if (!perPage) perPage = 5
+
+    return {
+      page,
+      perPage,
+    }
+  }
 }
