@@ -1,3 +1,5 @@
+import Application from '@ioc:Adonis/Core/Application'
+import { unlinkSync, existsSync } from 'fs'
 export default class Helper {
   public static slugify(text: string): string {
     return text
@@ -19,5 +21,18 @@ export default class Helper {
       page,
       perPage,
     }
+  }
+
+  public static unlinkFile(filename, path) {
+    if (typeof filename === 'object') {
+      for (let fn of filename) {
+        let filePath = Application.tmpPath(path) + fn
+        if (existsSync(filePath)) unlinkSync(filePath)
+      }
+      return
+    }
+
+    let filePath = Application.tmpPath(path) + filename
+    if (existsSync(filePath)) unlinkSync(filePath)
   }
 }
